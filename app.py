@@ -7,21 +7,24 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.documents import Document
 from langchain.chains import create_retrieval_chain
+import os
 
 # Load secrets for Streamlit Cloud
 OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
 LANGCHAIN_API_KEY = st.secrets["LANGCHAIN_API_KEY"]
-# LANGCHAIN_PROJECT = st.secrets.get("LANGCHAIN_PROJECT", "default_project")
 
-# Set environment variables (if needed for LangSmith tracking)
-import os
+# Set environment variables
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 os.environ["LANGCHAIN_API_KEY"] = LANGCHAIN_API_KEY
-# os.environ["LANGCHAIN_TRACING_V2"] = "true"
-# os.environ["LANGCHAIN_PROJECT"] = LANGCHAIN_PROJECT
 
 # Streamlit app UI
 st.title("Document Retrieval & Query App")
+
+# Initialize session state
+if "vectorstoredb" not in st.session_state:
+    st.session_state.vectorstoredb = None
+if "retrieval_chain" not in st.session_state:
+    st.session_state.retrieval_chain = None
 
 # URL input for data ingestion
 url = st.text_input("Enter the URL of the document to ingest:", 
@@ -44,6 +47,7 @@ if st.button("Load Document"):
         st.info("Creating vector embeddings...")
         embeddings = OpenAIEmbeddings()
         vectorstoredb = FAISS.from_documents(documents, embeddings)
+        st.session_state.vectorstoredb = vectorstoredb
         st.success("Document embeddings stored in vector database.")
         
         # Initialize retrieval mechanism
@@ -59,20 +63,30 @@ if st.button("Load Document"):
         """)
         document_chain = create_stuff_documents_chain(llm, prompt)
         retrieval_chain = create_retrieval_chain(retriever, document_chain)
+        st.session_state.retrieval_chain = retrieval_chain
         st.success("Ready to query the document!")
-        
-        # Query input and response
-        query = st.text_input("Enter your query:")
-        if st.button("Submit Query") and query.strip():
-            st.info("Processing your query...")
-            response = retrieval_chain.invoke({"input": query})
-            answer = response['answer']
-            context = response['context']
-            
-            # Display results
-            st.subheader("Answer:")
-            st.write(answer)
-            st.subheader("Context:")
-            st.write(context)
     except Exception as e:
         st.error(f"An error occurred: {e}")
+
+# Query input and response
+if st.session_state.retrieval_chain:
+    query = st.text_input("Enter your query:")
+    if st.button("Submit Query"):
+        if not query.strip():
+            st.error("Please enter a valid query!")
+        else:
+            try:
+                st.info("Processing your query...")
+                response = st.session_state.retrieval_chain.invoke({"input": query})
+                answer = response['answer']
+                context = response['context']
+                
+                # Display results
+                st.subheader("Answer:")
+                st.write(answer)
+                st.subheader("Context:")
+                st.write(context)
+            except Exception as e:
+                st.error(f"An error occurred: {e}")
+else:
+    st.warning("Please load a document before querying!")
