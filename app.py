@@ -60,8 +60,8 @@ if st.button("Load Document"):
         <context>
         {context}
         </context>
-        If the query is not relevant to the context, respond:
-        "It seems your query is not related to the provided document. Please refine your query."
+        If the user's query is not related to the document, respond:
+        "It seems your query is not related to the provided document. Please refine your query or ask something related to the document's content."
         """)
         document_chain = create_stuff_documents_chain(llm, prompt)
         retrieval_chain = create_retrieval_chain(retriever, document_chain)
