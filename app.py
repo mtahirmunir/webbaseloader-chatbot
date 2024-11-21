@@ -11,14 +11,14 @@ from langchain.chains import create_retrieval_chain
 # Load secrets for Streamlit Cloud
 OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
 LANGCHAIN_API_KEY = st.secrets["LANGCHAIN_API_KEY"]
-LANGCHAIN_PROJECT = st.secrets.get("LANGCHAIN_PROJECT", "default_project")
+# LANGCHAIN_PROJECT = st.secrets.get("LANGCHAIN_PROJECT", "default_project")
 
 # Set environment variables (if needed for LangSmith tracking)
 import os
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 os.environ["LANGCHAIN_API_KEY"] = LANGCHAIN_API_KEY
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_PROJECT"] = LANGCHAIN_PROJECT
+# os.environ["LANGCHAIN_TRACING_V2"] = "true"
+# os.environ["LANGCHAIN_PROJECT"] = LANGCHAIN_PROJECT
 
 # Streamlit app UI
 st.title("Document Retrieval & Query App")
