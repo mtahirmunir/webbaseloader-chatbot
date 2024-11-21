@@ -6,3 +6,4 @@ langchain-core
 faiss-cpu
 openai
 python-dotenv
+bs4
