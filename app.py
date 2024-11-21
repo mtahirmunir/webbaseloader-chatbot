@@ -83,7 +83,7 @@ if st.session_state.retrieval_chain:
                 # Process the query
                 response = st.session_state.retrieval_chain.invoke({"input": query})
                 answer = response['answer']
-                context = response['context']
+                # context = response['context']
                 
                 # Clear the temporary status message
                 status_message.empty()
@@ -91,8 +91,8 @@ if st.session_state.retrieval_chain:
                 # Display results
                 st.subheader("Answer:")
                 st.write(answer)
-                st.subheader("Context:")
-                st.write(context)
+                # st.subheader("Context:")
+                # st.write(context)
             except Exception as e:
                 st.error(f"An error occurred: {e}")
 else:
