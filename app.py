@@ -28,7 +28,7 @@ if "retrieval_chain" not in st.session_state:
 
 # URL input for data ingestion
 url = st.text_input("Enter the URL of the document to ingest:", 
-                    "https://docs.smith.langchain.com/tutorials/Administrators/manage_spend")
+                    "https://www.w3schools.com/python/python_intro.asp")
 
 # Button to load and process documents
 if st.button("Load Document"):
@@ -56,12 +56,10 @@ if st.button("Load Document"):
         # Set up LLM and chains
         llm = ChatOpenAI(model="gpt-4")
         prompt = ChatPromptTemplate.from_template("""
-        Use the following context to answer the user's query:
+        Answer the following question based only on the provided context:
         <context>
         {context}
         </context>
-        If the user's query is not related to the document, respond:
-        "It seems your query is not related to the provided document. Please refine your query or ask something related to the document's content."
         """)
         document_chain = create_stuff_documents_chain(llm, prompt)
         retrieval_chain = create_retrieval_chain(retriever, document_chain)
@@ -84,10 +82,8 @@ if st.session_state.retrieval_chain:
                 
                 # Process the query
                 response = st.session_state.retrieval_chain.invoke({"input": query})
-                
-                # Ensure response structure is correct
-                answer = response.get('answer', "No answer found.")
-                context = response.get('context', "No context available.")
+                answer = response['answer']
+                context = response['context']
                 
                 # Clear the temporary status message
                 status_message.empty()
