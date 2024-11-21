@@ -28,7 +28,7 @@ if "retrieval_chain" not in st.session_state:
 
 # URL input for data ingestion
 url = st.text_input("Enter the URL of the document to ingest:", 
-                    "https://docs.smith.langchain.com/tutorials/Administrators/manage_spend")
+                    "https://www.w3schools.com/python/python_intro.asp")
 
 # Button to load and process documents
 if st.button("Load Document"):
@@ -60,6 +60,9 @@ if st.button("Load Document"):
         <context>
         {context}
         </context>
+        
+        If the query is not relevant to the context, respond first by saying:
+        "It seems your query is not related to the provided document." Then, guide the user further to refine their query.
         """)
         document_chain = create_stuff_documents_chain(llm, prompt)
         retrieval_chain = create_retrieval_chain(retriever, document_chain)
@@ -76,10 +79,17 @@ if st.session_state.retrieval_chain:
             st.error("Please enter a valid query!")
         else:
             try:
-                st.info("Processing your query...")
+                # Temporary status message
+                status_message = st.empty()
+                status_message.info("Processing your query...")
+                
+                # Process the query
                 response = st.session_state.retrieval_chain.invoke({"input": query})
                 answer = response['answer']
                 context = response['context']
+                
+                # Clear the temporary status message
+                status_message.empty()
                 
                 # Display results
                 st.subheader("Answer:")
