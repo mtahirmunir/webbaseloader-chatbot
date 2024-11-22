@@ -17,8 +17,13 @@ LANGCHAIN_API_KEY = st.secrets["LANGCHAIN_API_KEY"]
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 os.environ["LANGCHAIN_API_KEY"] = LANGCHAIN_API_KEY
 
+# Set page configuration with title and favicon
+st.set_page_config(
+    page_title="Document Retrieval & Query App",  # Title that appears in the browser tab
+    page_icon="🌍",  # Favicon, can be an emoji or a file path to an image
+)
 # Streamlit app UI
-st.title("Document Retrieval & Query App")
+st.title("Web Based Loader and Document Retrieval Query App")
 
 # Initialize session state
 if "vectorstoredb" not in st.session_state:
