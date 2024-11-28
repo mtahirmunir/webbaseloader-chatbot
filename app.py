@@ -61,11 +61,14 @@ if st.button("Load Document"):
         # Set up LLM and chains
         llm = ChatOpenAI(model="gpt-4")
         prompt = ChatPromptTemplate.from_template("""
-        Answer the following question based only on the provided context:
-        <context>
-        {context}
-        </context>
-        """)
+    You are an assistant for question-answering tasks. 
+    Use the following pieces of retrieved context to answer 
+    the question. If you don't know the answer, say that you 
+    don't know. Use three sentences maximum and keep the 
+    answer concise.
+
+    {context}
+    """)
         document_chain = create_stuff_documents_chain(llm, prompt)
         retrieval_chain = create_retrieval_chain(retriever, document_chain)
         st.session_state.retrieval_chain = retrieval_chain
